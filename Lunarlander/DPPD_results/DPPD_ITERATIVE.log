@@ -1,0 +1,13 @@
+2019-05-02 13:57:25,971  - INFO     -  ------------- START: -------------
+2019-05-02 13:57:25,972  - INFO     - Setting initial data structures
+2019-05-02 13:57:25,972  - INFO     - Loading models
+2019-05-02 13:57:26,639  - INFO     - ----- evaluating teacher -----
+2019-05-02 13:58:04,689  - INFO     - ----- teacher evaluated with 230.01959641147334 ------
+2019-05-02 13:58:06,176  - INFO     -  -----  Pruning Step 1 -----
+2019-05-02 13:58:09,719  - INFO     - -- ITERATION number 0/100: accumulating experience from teacher --
+2019-05-02 13:58:20,361  - INFO     - -- ITERATION number 0/100: finished accumulating experience from teacher starting to prune and fine-tune the student --
+2019-05-02 13:58:20,361  - INFO     - learning rate is 1e-05
+2019-05-02 13:58:28,123  - INFO     - Evaluation of student 0/20000 : sparsity is 0.0, 25 episode mean score is 225.8392704397824
+2019-05-02 13:58:28,123  - INFO     - saving model with sparsity 0.0, in path DPPD_results/prune_step_1
+2019-05-02 13:58:39,982  - INFO     - Evaluation of student 1000/20000 : sparsity is 0.0, 25 episode mean score is 251.12340921747156
+2019-05-02 13:58:39,983  - INFO     - saving model with sparsity 0.0, in path DPPD_results/prune_step_1
