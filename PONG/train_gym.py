@@ -7,7 +7,7 @@ import numpy as np
 from utils.logger_utils import get_logger
 from argparse import ArgumentParser
 
-USE_PER = 1
+USE_PER = 0
 FLAGS = 0
 
 

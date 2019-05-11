@@ -1,9 +1,7 @@
 import gym
-from model import DQNPong, StudentPong, DQNAgent
+from model import DQNPong, DQNAgent
 from utils.wrappers import wrap_deepmind
 from configs import DensePongAgentConfig as dense_config
-from configs import PrunePongAgentConfig as prune_config
-from configs import StudentPongConfig as student_config
 import numpy as np
 from argparse import ArgumentParser
 
