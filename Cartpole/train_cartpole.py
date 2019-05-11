@@ -1,7 +1,7 @@
 import gym
 from model import CartPoleDQN, CartPoleDQNTarget
 from configs import CartpoleConfig as dense_config
-from utils.Memory import PrioritizedExperienceReplay
+from utils.Memory import ExperienceReplay
 import numpy as np
 from utils.logger_utils import get_logger
 from PONG.train_gym import train_on_batch
@@ -9,7 +9,7 @@ from PONG.train_gym import train_on_batch
 
 def main():
     agent = CartPoleDQN(input_size=dense_config.input_size,
-                        output_size=dense_config.output_size, model_path=dense_config.model_path)
+                        output_size=dense_config.output_size, model_path=dense_config.model_path_overtrained)
     target_agent = CartPoleDQNTarget(input_size=dense_config.input_size, output_size=dense_config.output_size)
     agent.print_num_of_params()
     target_agent.print_num_of_params()
@@ -21,7 +21,7 @@ def fit(logger, agent: CartPoleDQN, target_agent: CartPoleDQNTarget, n_epochs=15
     logger.info("------Building env------")
     env = gym.make('CartPole-v0')
     last_mean_100_reward = [0] * 100
-    exp_replay = PrioritizedExperienceReplay(size=dense_config.memory_size, alpha=dense_config.ALPHA_PER)
+    exp_replay = ExperienceReplay(size=dense_config.memory_size)
     logger.info("------Commence training------")
     degradation = 1 / dense_config.EXPLORE
     agent.set_degradation(degradation)
