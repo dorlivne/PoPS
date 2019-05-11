@@ -173,6 +173,14 @@ class DQNAgent(BaseNetwork):  # abstract class
             nnz_at_each_layer.append(len([w for w in matrix.ravel() if w != 0]))
         return nnz_at_each_layer
 
+    def get_number_of_params(self):
+        flatten_matrices = self.get_flat_weights()
+        weights = []
+        for w in flatten_matrices:
+            weights.extend(list(w.ravel()))
+        weights_array = [w for w in weights]
+        return len(weights_array)
+
     @abstractmethod
     def _build_logits(self):
         pass

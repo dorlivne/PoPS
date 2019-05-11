@@ -1,18 +1,20 @@
+from configs import StudentPongConfig as student_config
+from PONG.evaluate import evaluate
+from utils.Memory import Supervised_ExperienceReplay, Supervised_Prioritzed_ExperienceReplay
+import numpy as np
+from policy_distilliation_train import accumulate_experience, train_student
+
+"""
 import gym
 from model import DQNPong, PongTargetNet, StudentPong
 from utils.wrappers import wrap_deepmind
 from configs import DensePongAgentConfig as dense_config
 from configs import PrunePongAgentConfig as prune_config
-from configs import StudentPongConfig as student_config
-from PONG.evaluate import evaluate
-from utils.Memory import ExperienceReplayMultistep, MultiStepPrioritizedExperienceReplay, Supervised_ExperienceReplay,\
-    Supervised_Prioritzed_ExperienceReplay
-import numpy as np
 from PONG.train_gym import train_on_batch, USE_PER
 from utils.plot_utils import plot_graph, plot_nnz_vs_accuracy
 from utils.logger_utils import get_logger
-from policy_distilliation_train import accumulate_experience, train_student
 from multiprocessing import Process, Queue
+from utils.Memory import ExperienceReplayMultistep, MultiStepPrioritizedExperienceReplay
 
 
 def prune_DQN(queue=None):
@@ -33,7 +35,7 @@ def prune_DQN(queue=None):
     logger.info("Commencing iterative pruning")
     sparsity_vs_accuracy = iterative_pruning(logger, prune_model, target_model, prune_config.n_epoch)
     print("dqn finished")
-    plot_graph(sparsity_vs_accuracy, "sparsity_vs_accuracy", figure_num=1)
+    plot_graph(sparsity_vs_accuracy, "NNZ_vs_accuracy", figure_num=1)
     if queue is not None:
         queue.put(sparsity_vs_accuracy)
     prune_model.sess.close()
@@ -77,9 +79,10 @@ def iterative_pruning(logger, agent, target_agent, n_epoch):
         if e % 10 == 0:
             score = evaluate(agent=agent, n_epoch=5)
             sparsity = agent.get_model_sparsity()
-            if last_sparsity_measure < sparsity:
+            if last_sparsity_measure < sparsity:  # got pruned
+                NNZ = agent.get_number_of_nnz_params()
                 sparsity_vs_accuracy[1].append(score)
-                sparsity_vs_accuracy[0].append(sparsity)  # 0 is sparsity and 1 is score
+                sparsity_vs_accuracy[0].append(NNZ)
                 last_sparsity_measure = sparsity
                 m = 0
             elif score > sparsity_vs_accuracy[1][-1]:  # better performance for current sparsity
@@ -92,7 +95,7 @@ def iterative_pruning(logger, agent, target_agent, n_epoch):
             logger.info("Episode {} / {} : accuracy is  {} with sparsity {}"
                         .format(e, n_epoch, sparsity_vs_accuracy[1][-1], sparsity_vs_accuracy[0][-1]))
             if total_steps >= prune_config.OBSERVE:
-                if score > 18.0:
+                if score > dense_config.OBJECTIVE_SCORE:
                     if stop_prune:
                         stop_prune = False
                         freeze_global_step = agent.set_global_step(freeze_global_step)
@@ -100,10 +103,10 @@ def iterative_pruning(logger, agent, target_agent, n_epoch):
                                     " continue pruning with global step {}".format(freeze_global_step))
                     logger.info("Saved best model with average score of {} and sparsity {}".format(sparsity_vs_accuracy[1][-1], sparsity_vs_accuracy[0][-1]))
                     agent.save_model(prune_config.best_path)
-                if score < 0.0:
+                if score < dense_config.LOWER_BOUND:
                     if not stop_prune:
                         stop_prune = True
-                        freeze_global_step = agent.print_global_step()  # algorithem works with global step
+                        freeze_global_step = agent.print_global_step()  # algorithm works with global step
                         logger.info("stopped pruning due to low results, global step is {}".format(freeze_global_step))
                     i += 1
                     if i % 10 == 0 or m % 10 == 0:
@@ -138,9 +141,9 @@ def prune_policy_dist(queue=None):
     prune_model.reset_global_step()
     logger.info("Commencing iterative pruning")
     sparsity_vs_accuracy = iterative_pruning_policy_distilliation(agent=prune_model, target_agent=target_model,
-                                                                  iterations=student_config.n_epochs + 25, logger=logger)
+                                                                  iterations=student_config.n_epochs, logger=logger)
     print("dist finished")
-    plot_graph(sparsity_vs_accuracy, "sparsity_vs_accuracy", figure_num=1, file_name="sparsity_vs_accuracy_with_dist")
+    plot_graph(sparsity_vs_accuracy, "NNZ_vs_accuracy", figure_num=1, file_name="NNZ_vs_accuracy_with_dist")
     if queue is not None:
         queue.put(sparsity_vs_accuracy)
     prune_model.sess.close()
@@ -157,11 +160,15 @@ def main():
     sparsity_vs_accuracy_dqn = DQN_Queue.get()
     sparsity_vs_accuracy_policy = policy_Queue.get()
     plot_nnz_vs_accuracy(data_policy=sparsity_vs_accuracy_policy, data_pruned=sparsity_vs_accuracy_dqn,
-                         legend=('pruning_with_policy_dist', 'pruning'), xlabel='sparsity', ylabel='accuracy',
-                         title='sparsity_vs_accuracy')
+                         legend=('pruning_with_policy_dist', 'pruning'), xlabel='NNZ', ylabel='accuracy',
+                         title='NNZ_vs_accuracy')
     p_DQN.join()
     p_policy_dist.join()
+    
+if __name__ == '__main__':
+    main()
 
+"""
 
 def iterative_pruning_policy_distilliation(logger, agent, target_agent, iterations=100, use_per=False,
                                            config=student_config, best_path=student_config.prune_best,
@@ -189,9 +196,10 @@ def iterative_pruning_policy_distilliation(logger, agent, target_agent, iteratio
              sparse_model : the sparse_model is saved in best_path, the sparse_model should be able to solve the environment
     """
     initial_score = evaluate_fn(agent=agent)
-    sparsity_vs_accuracy = [[], []]
-    sparsity_vs_accuracy[1].append(initial_score)
-    sparsity_vs_accuracy[0].append(agent.get_model_sparsity())
+    NNZ_vs_accuracy = [[], []]
+    NNZ_params_measure = agent.get_number_of_nnz_params()  # initial number of parameters
+    NNZ_vs_accuracy[1].append(initial_score)
+    NNZ_vs_accuracy[0].append(NNZ_params_measure)
     if use_per:
         exp_replay = Supervised_Prioritzed_ExperienceReplay(size=config.memory_size,
                                                             alpha=config.ALPHA_PER)
@@ -199,13 +207,12 @@ def iterative_pruning_policy_distilliation(logger, agent, target_agent, iteratio
         exp_replay = Supervised_ExperienceReplay(size=config.memory_size)
 
     stop_prune_arg = False
-    m = 0
-    r = 0
-    cnt = 0
-    learning_rate_multiplier = 1.0
+    m = 0  # counter for number of consecutive iteration the model was evaluated below the lower bound
+    r = 0  # counter for number of consecutive iteration the model didn't prune due to low results
+    cnt = 0  # counter for number of consecutive iteration the model's sparsity remained the same
+    learning_rate_multiplier = 1.0  # dynamic learning rate when the model cannot recuperate for more then 5 iterations
     plus = True
     multiplier = 10
-    sparsity_measure = 0
     for i in range(iterations):
         logger.info("-- ITERATION number " + str(i) + "/" + str(iterations) + ": accumulating experience from teacher --")
         print("-- ITERATION number " + str(i) + "/" + str(iterations) + ": accumulating experience from teacher --")
@@ -214,7 +221,7 @@ def iterative_pruning_policy_distilliation(logger, agent, target_agent, iteratio
                     ": finished accumulating experience from teacher starting to prune and fine-tune the student --")
         print("-- ITERATION number " + str(i) + "/" + str(iterations) +
               ": finished accumulating experience from teacher starting to prune and fine-tune the student -- ")
-        score_list, sparsity_list, stop_prune_arg = train_student(logger=logger, student=agent,
+        score_list, NNZ_params_list, stop_prune_arg = train_student(logger=logger, student=agent,
                                                                   exp_replay=exp_replay,
                                                                   prune=True,
                                                                   lr=config.learning_rate_schedule_prune(i, arch_type) * learning_rate_multiplier,
@@ -224,9 +231,9 @@ def iterative_pruning_policy_distilliation(logger, agent, target_agent, iteratio
                                                                   lower_bound=lower_bound)
 
         for j, score in enumerate(score_list):
-            if sparsity_list[j] > sparsity_vs_accuracy[0][-1]:
-                sparsity_vs_accuracy[1].append(score)
-                sparsity_vs_accuracy[0].append(sparsity_list[j])
+            if NNZ_params_list[j] < NNZ_vs_accuracy[0][-1]:  # if the number of Non zero params is lower that means we pruned
+                NNZ_vs_accuracy[1].append(score)
+                NNZ_vs_accuracy[0].append(NNZ_params_list[j])
 
         mean_score = np.mean(score_list)
         logger.info("-- iteration number " + str(i) + ": student evaluation after pruning procedeure is: "
@@ -243,9 +250,13 @@ def iterative_pruning_policy_distilliation(logger, agent, target_agent, iteratio
         else:
             m = 0
 
-        if stop_prune_arg:  # if the model cant recuperate we drunk-walk the learning rate to help it get un-stuck
+        if stop_prune_arg:
             r += 1
             if r >= 5:
+                # if the model cant recuperate we drunk-walk the learning rate to help it get un-stuck,
+                # if the learning rate scheduler is done carefully, the algorithm shouldn't get here
+                # in the paper we didn't really got to use it but it is a nice-to-have dynamic feature to help
+                # models to get unstuck
                 logger.info("Changing learning rate")
                 if plus:
                     learning_rate_multiplier *= multiplier
@@ -255,7 +266,7 @@ def iterative_pruning_policy_distilliation(logger, agent, target_agent, iteratio
                     learning_rate_multiplier /= multiplier
                     plus = True
                     multiplier *= 10
-            if sparsity_measure == sparsity_vs_accuracy[0][-1]:
+            if NNZ_params_measure == NNZ_vs_accuracy[0][-1]:
                 cnt += 1
                 if cnt == 5:
                     logger.info("sparsity converged, ending pruning procedure")
@@ -266,11 +277,8 @@ def iterative_pruning_policy_distilliation(logger, agent, target_agent, iteratio
         else:
             multiplier = 10.0
             r = 0
+        # if we pruned some weights we expect that the number of Non zero parameters will drop
+        if NNZ_vs_accuracy[0][-1] < NNZ_params_measure:  # update the measure of NNZ params to check if the sparsity converged
+            NNZ_params_measure = NNZ_vs_accuracy[0][-1]
+    return NNZ_vs_accuracy
 
-        if sparsity_vs_accuracy[0][-1] > sparsity_measure:
-            sparsity_measure = sparsity_vs_accuracy[0][-1]
-    return sparsity_vs_accuracy
-
-
-if __name__ == '__main__':
-    main()

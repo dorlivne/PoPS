@@ -9,6 +9,8 @@ class StudentPongConfig:
     input_size = INPUT_DIM
     output_size = OUTPUT_DIM
     iterative_DPPD = r'DPPD_Iterative'
+    model_path_policy_dist_pruned = r'saved_models/network_dense_Pong_Student_policy_pruned'
+    model_path_policy_dist_ready = r'saved_models/network_dense_Pong_Student_policy_dist_ready'
     prune_best = r'saved_models/best_prune'
     batch_size = 256
     memory_size = 100000  # 100k
@@ -113,6 +115,8 @@ class DensePongAgentConfig:
     EXPLORE = 100000  # 100k
     OBSERVE = 10000  # 10k
     UPDTATE_FREQ = 1000
+    OBJECTIVE_SCORE = 18.0
+    LOWER_BOUND = 0.0
     steps_per_train = 4
     scope = 'PongDQN'
     ALPHA_PER = 0.6
@@ -200,13 +204,15 @@ class CartpoleConfig:
     input_size = (None, 4)
     output_size = (None, 2)
     model_path = 'saved_models/Cart_pole/network_dense'
+    model_path_overtrained = r'saved_models/Cart_pole/network_dense_over_trained'
     ready_path = 'saved_models/Cart_pole/‏‏network_dense_ready'
-    n_epoch = 5000
+    ready_path_overtrained = 'saved_models/Cart_pole/‏‏network_dense_ready_over_trained'
+    n_epoch = 15000
     batch_size = 128
     memory_size = 100000
     EXPLORE = 100000  # 100k
     OBSERVE = 25000  # 10k
-    UPDTATE_FREQ = 1000
+    UPDTATE_FREQ = 600
     ALPHA_PER = 0.6
     EPS_PER = 1e-6
     BETA0_PER = 0.4
@@ -217,12 +223,14 @@ class CartpoleConfig:
     def learning_rate_schedule(epoch : int):
         if epoch <= 2500:
             return 1e-3
-        if 2500 < epoch <= 3500:
+        if 2500 < epoch <= 5000:
+            return 8e-4
+        if 5000 < epoch <= 7500:
             return 5e-4
-        if 3500 < epoch <= 4500:
-            return 2e-4
-        else:
+        if 7500 < epoch <= 10000:
             return 1e-4
+        else:
+            return 5e-5
 
 
     @staticmethod

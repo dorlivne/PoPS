@@ -1,28 +1,9 @@
 from utils.Memory import Supervised_ExperienceReplay, Supervised_Prioritzed_ExperienceReplay
-import gym
-from configs import DensePongAgentConfig as dense_config
+from PONG.accumulate_experience_Pong import accumulate_experience
 from configs import StudentPongConfig as student_config
-from model import StudentPong, PongTargetNet, DQNAgent
-from utils.logger_utils import get_logger
-from utils.wrappers import wrap_deepmind
+from model import DQNAgent
 import numpy as np
 from PONG.evaluate import evaluate
-
-
-
-def main():
-    logger = get_logger("train_pong_policy_distilliation")
-    teacher = PongTargetNet(input_size=dense_config.input_size, output_size=dense_config.output_size)
-    teacher.load_model(path=dense_config.ready_path)  # load teacher
-    student = StudentPong(input_size=student_config.input_size,
-                          output_size=student_config.output_size,
-                          model_path=student_config.model_path_policy_dist,
-                          tau=student_config.tau,
-                          redundancy=[0.84765625, 0.9994049072265625, 0.999359130859375, 0.828125])
-    student_params = student.print_num_of_params()
-    teacher_params = teacher.print_num_of_params()
-    print("percent : {}".format(student_params / teacher_params))
-    fit_supervised(logger, teacher, student, student_config.n_epochs, arch_type=1)
 
 
 def policy_distilliation_batch_train(exp_replay, student: DQNAgent, learning_rate=1.0e-4,
@@ -60,37 +41,6 @@ def policy_distilliation_batch_train(exp_replay, student: DQNAgent, learning_rat
     return loss
 
 
-def accumulate_experience(teacher, exp_replay: Supervised_ExperienceReplay, config=student_config):
-    """
-    teacher feeds the Experience replay with new experiences
-    :param teacher: teacher net, knows how to solve the problem
-    :param exp_replay: the experience replay where the teacher saves its experiences
-    :param config : holds customer variables such as OBSERVE
-    :return: an experience replay filled with new experiences
-    """
-
-    env = gym.make("PongNoFrameskip-v4")
-    env = wrap_deepmind(env, frame_stack=True)
-    steps = 0
-    while 1:
-        state = env.reset()
-        state = np.asarray(state)
-        done = False
-        while not done:
-            steps += 1
-            teacher_q_value = teacher.get_q(state=np.reshape(state, (1, state.shape[0], state.shape[1], state.shape[2])))
-            action = teacher.select_action(teacher_q_value)
-            next_state, reward, done, _ = env.step(action + 1)
-            next_state = np.asarray(next_state)
-            exp_replay.add_memory(state, teacher_q_value, action)  # feeding the experience replay
-            state = next_state
-        if steps > config.OBSERVE:  # we have OBSERVE  number of exp in exp_replay
-            try:
-                del env
-            except ImportError:
-                pass
-            break
-
 
 def train_student(logger, student, exp_replay: Supervised_ExperienceReplay,
                   prune=False, best_path=student_config.prune_best, lr=1.0e-4, stop_prune_arg=True,
@@ -115,7 +65,7 @@ def train_student(logger, student, exp_replay: Supervised_ExperienceReplay,
     :return: information regarding the current learning session and the stop prune arg for later iterations to use,
              relevant only when pruning the agent
     """
-    sparsity_list = []
+    NNZ_params_list = []
     score_list = []
     stop_prune = stop_prune_arg
     m = 0
@@ -137,8 +87,9 @@ def train_student(logger, student, exp_replay: Supervised_ExperienceReplay,
                 print("Evaluation of student {}/{} : sparsity is {}, {} episode mean score is {}"
                       .format(iter, num_of_iteration, sparsity, config.eval_prune, score))
                 if sparsity > last_sparsity_measure:
+                    NNZ = student.get_number_of_nnz_params()
                     score_list.append(score)
-                    sparsity_list.append(sparsity)
+                    NNZ_params_list.append(NNZ)
                     last_sparsity_measure = sparsity
                 elif score > score_list[-1]:
                     score_list[-1] = score
@@ -164,7 +115,7 @@ def train_student(logger, student, exp_replay: Supervised_ExperienceReplay,
                 else:
                     m = 0
 
-    return score_list, sparsity_list, stop_prune
+    return score_list, NNZ_params_list, stop_prune
 
 
 def fit_supervised(logger, teacher, student, n_epochs, arch_type=0, config=student_config,
@@ -223,6 +174,3 @@ def fit_supervised(logger, teacher, student, n_epochs, arch_type=0, config=stude
     student.save_model()
     return score
 
-
-if __name__ == '__main__':
-    main()
