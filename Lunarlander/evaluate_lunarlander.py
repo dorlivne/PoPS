@@ -9,6 +9,7 @@ from Lunarlander.train_lunarlander import preprocess_state
 def main():
     actor = ActorLunarlander(input_size=dense_config.input_size, output_size=dense_config.output_size,
                              model_path=FLAGS.actor_path)
+    print("size is {}".format(actor.get_number_of_params()))
     actor.load_model()
     score = evaluate(agent=actor, n_epoch=FLAGS.eval_epochs, render=FLAGS.render)
     if score > 200:

@@ -8,7 +8,7 @@ from Lunarlander.evaluate_lunarlander import evaluate
 from Lunarlander.copy_weights_Lunarlander import copy_weights
 from collections import deque
 from prune import iterative_pruning_policy_distilliation
-from Lunarlander.train_lunarlander import accumulate_experience_lunarlander
+from Lunarlander.accumulate_experience_lunarlander import accumulate_experience_lunarlander
 from utils.tensorflow_utils import calculate_redundancy
 from policy_distilliation_train import fit_supervised
 from utils.plot_utils import plot_graph
@@ -69,7 +69,7 @@ def main():
         logger.info(" -----  Pruning Step {} -----".format(iteration))
         path_to_save_pruned_model = prune_step_path + str(iteration)
         if arch_type == 2:
-            arch_type = 3  # special arch_type for prune-oriented learning rate    
+            arch_type = 3  # special arch_type for prune-oriented learning rate
         sparsity_vs_accuracy = iterative_pruning_policy_distilliation(logger=logger, agent=compressed_agent,
                                                                       target_agent=teacher,
                                                                       iterations=FLAGS.iterations,
