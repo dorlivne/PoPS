@@ -8,7 +8,7 @@ OUTPUT_DIM = (None, 3)  # up down and nothing
 class StudentPongConfig:
     input_size = INPUT_DIM
     output_size = OUTPUT_DIM
-    iterative_DPPD = r'DPPD_Iterative'
+    iterative_PoPS = r'PoPS_Iterative'
     model_path_policy_dist_pruned = r'saved_models/network_dense_Pong_Student_policy_pruned'
     model_path_policy_dist_ready = r'saved_models/network_dense_Pong_Student_policy_dist_ready'
     prune_best = r'saved_models/best_prune'
@@ -243,7 +243,7 @@ class PruneCartpoleConfig:
     output_size = (None, 2)
     model_path = 'saved_models/Cart_pole/network_prune'
     best_model = 'saved_models/Cart_pole/‏network_prune_best'
-    iterative_DPPD = r'DPPD_iterative'
+    iterative_PoPS = r'PoPS_iterative'
     policy_dist = r'saved_models/‏network_policy_dist'
     n_epoch = 125
     batch_size = 128
@@ -370,7 +370,7 @@ class LunarLanderConfig:
 class StudentLunarLanderConfig:
     input_size = (None, 8)
     output_size = (None, 4)
-    iterative_DPPD = r'DPPD_results'
+    iterative_PoPS = r'PoPS_results'
     n_epochs = 100
     tau = 0.01
     memory_size = 100000
