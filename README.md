@@ -1,2 +1,2 @@
-# DPPD
-DPPD algorithm
+# PoPS
+PoPS algorithm
