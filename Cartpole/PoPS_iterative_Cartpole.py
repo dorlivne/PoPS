@@ -4,7 +4,7 @@ from model import CartPoleDQNTarget, StudentCartpole
 from utils.plot_utils import plot_graph
 from utils.logger_utils import get_logger
 from Cartpole.evaluate_cartpole import evaluate_cartepole as evaluate
-from policy_distilliation_train import fit_supervised
+from train import fit_supervised
 from Cartpole.accumulate_experience_cartpole import accumulate_experience_cartpole
 from prune import iterative_pruning_policy_distilliation
 from argparse import ArgumentParser
