@@ -10,7 +10,7 @@ from collections import deque
 from prune import iterative_pruning_policy_distilliation
 from Lunarlander.accumulate_experience_lunarlander import accumulate_experience_lunarlander
 from utils.tensorflow_utils import calculate_redundancy
-from policy_distilliation_train import fit_supervised
+from train import fit_supervised
 from utils.plot_utils import plot_graph
 
 
