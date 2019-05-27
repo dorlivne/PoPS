@@ -5,7 +5,7 @@ from model import PongTargetNet, StudentPong
 from utils.plot_utils import plot_graph
 from utils.logger_utils import get_logger
 from PONG.evaluate import evaluate
-from policy_distilliation_train import fit_supervised
+from train import fit_supervised
 from prune import iterative_pruning_policy_distilliation
 from argparse import ArgumentParser
 from PONG.copy_weights import copy_weights
