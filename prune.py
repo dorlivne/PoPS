@@ -2,7 +2,7 @@ from configs import StudentPongConfig as student_config
 from PONG.evaluate import evaluate
 from utils.Memory import Supervised_ExperienceReplay, Supervised_Prioritzed_ExperienceReplay
 import numpy as np
-from policy_distilliation_train import accumulate_experience, train_student
+from train import accumulate_experience, train_student
 
 
 def iterative_pruning_policy_distilliation(logger, agent, target_agent, iterations=100, use_per=False,

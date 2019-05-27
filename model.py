@@ -1164,7 +1164,6 @@ class Actor(DQNAgent):
         sparsity = self.sess.run(self.sparsity)
         return np.mean(sparsity)
 
-
     def _build_loss(self):
         """
                return:
@@ -1185,7 +1184,7 @@ class Actor(DQNAgent):
         _,loss = self.sess.run([self.train_op, self.loss], feed_dict={self.input: input,
                                                    self.target: target_batch,
                                                    self.learning_rate: learning_rate})
-        return loss , 1 # for compatibaility
+        return loss, 1  # for compatibaility
 
 
 class ActorLunarlander(Actor):
