@@ -20,13 +20,14 @@ In recent years, pruning algorithms have demonstrated considerable success in re
 it also holds the dynamic learning rate function for each architecture, we noticed that the learning rate should be higher when the architecture is smaller.
 there is no need to use configs.py if you are planning on implementing "PoPS" on a new environment.
 
-2)*model.py* - file contains the model architecture for each environment such as class DQNPong, class CartPoleDQN, class ActorLunarLander, and CriticLunarLander. These models are used for the initial training phase, and follow the DQNAgent interface. Each model is associated with a Student version that inherits it, such as StudentPong. The Student version is adjusted for the PoPS algorithm such that the loss function is the KL-Divergence loss function (described in the paper)and the architecture is a dynamic architecture which is defined by the redundancy measures and the *_calculate_sizes_according_to_redundancy* function each student has which basically defines each layer size by the redundancy measures.
+2) *model.py* - file contains the model architecture for each environment such as class DQNPong, class CartPoleDQN, class ActorLunarLander, and CriticLunarLander. These models are used for the initial training phase, and follow the DQNAgent interface. Each model is associated with a Student version that inherits it, such as StudentPong. The Student version is adjusted for the PoPS algorithm such that the loss function is the KL-Divergence loss function (described in the paper)and the architecture is a dynamic architecture which is defined by the redundancy measures and the *_calculate_sizes_according_to_redundancy* function each student has which basically defines each layer size by the redundancy measures.
 
 3) *train.py* -  contains functions that execute the policy distillation training procedure as well as the IPP's pruning and fine-tuning steps. The functions are well documented and are used by a variety of models and environments. in short, *train_student* function is responsible on training and optionally prune the model and *fit_supervised* is responsible on preforming the entire policy distillation training procedure.
 
-4)*prune.py* - contains the IPP module orchestrating the pruning phase in the PoPS algorithm as detailed in the paper.
+4) *prune.py* - contains the IPP module orchestrating the pruning phase in the PoPS algorithm as detailed in the paper.
               it contains the function *iterative_pruning_policy_distilliation* which takes a trained model, and prune it with IPP
               it outputs information regarding the preformance of the model during the pruning process and a sparse model which is saved               in the given path(as stated in the script).
+              
 5) *utils.py* - a collection of helpful utils that are used for plotting graphs or histograms, using the tensorflow interface with the pruning framework in a more convenient manner and etc.
 
   
