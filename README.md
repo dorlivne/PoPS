@@ -16,6 +16,6 @@ The recent success of deep neural networks (DNNs) for function approximation in 
 In recent years, pruning algorithms have demonstrated considerable success in reducing the redundancy of DNNs in classification tasks. However, existing algorithms suffer from a significant performance reduction in the DRL domain. In this paper, we develop the first effective solution to the performance reduction problem of pruning in the DRL domain, and establish a working algorithm, named Policy Pruning and Shrinking (PoPS), to train DRL models with strong performance while achieving a compact representation of the DNN. The framework is based on a novel iterative policy pruning and shrinking method that leverages the power of transfer learning when training the DRL model. We present an extensive experimental study that demonstrates the strong performance of PoPS using the popular Cartpole, Lunar Lander, and Pong environments. Finally, we develop an open source software for the benefit of researchers and developers in related fields.
 
 # Modules
-1) The \textit{configs.py} file holds the configuration for each environment and model, parameters (such as the target sparsity and the pruning frequency for the pruning procedure) that affect the initial training phase, and the PoPS procedure.
+1) *configs.py* - file holds the configuration for each environment and model, parameters (such as the target sparsity and the pruning frequency for the pruning procedure) that affect the initial training phase, and the PoPS procedure.
 
 
