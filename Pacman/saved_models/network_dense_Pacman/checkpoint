@@ -1,0 +1,2 @@
+model_checkpoint_path: "/media/dorliv/50D03BD3D03BBE52/Study/Masters/PoPS/Pacman/saved_models/network_dense_Pacman/model.ckpt"
+all_model_checkpoint_paths: "/media/dorliv/50D03BD3D03BBE52/Study/Masters/PoPS/Pacman/saved_models/network_dense_Pacman/model.ckpt"
