@@ -12,7 +12,7 @@ Box2D==2.3.2
 certifi==2018.11.29
 chardet==3.0.4
 configparser==3.7.4
-cryptography==2.1.4
+cryptography==2.3
 cycler==0.10.0
 decorator==4.4.0
 defusedxml==0.6.0
