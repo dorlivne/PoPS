@@ -34,18 +34,18 @@ there is no need to use configs.py if you are planning on implementing "PoPS" on
   
   
  ## Please Cite Our Paper
-  @ARTICLE{livne2020PoPS,
-      author  = {Livne, Dor and Cohen, Kobi},
-      journal = {to appear in the IEEE Journal of Selected Topics in Signal Processing},
-      title   = {PoPS: Policy Pruning and Shrinking for Deep Reinforcement Learning},
-      year 	= {2020},
-      volume 	= {__},
-      number 	= {__},
-      pages 	= {__-__},
-      doi 	= {__},
-      ISSN 	= {__},
-      month 	= {__},
-  }
+    @ARTICLE{livne2020PoPS,
+        author  = {Livne, Dor and Cohen, Kobi},
+        journal = {to appear in the IEEE Journal of Selected Topics in Signal Processing},
+        title   = {PoPS: Policy Pruning and Shrinking for Deep Reinforcement Learning},
+        year 	= {2020},
+        volume 	= {__},
+        number 	= {__},
+        pages 	= {__-__},
+        doi 	= {__},
+        ISSN 	= {__},
+        month 	= {__},
+    }
 
 
 
