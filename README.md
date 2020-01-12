@@ -1,5 +1,6 @@
 # PoPS: Policy Pruning and Shrinking for Deep Reinforcement Learning
-This repository contains the PoPS framework code, as presented in "PoPS: Policy Pruning and Shrinking for Deep Reinforcement Learning". 
+This repository contains the PoPS framework code, as presented in "PoPS: Policy Pruning and Shrinking for Deep Reinforcement Learning". The paper has been accepted for publication in the IEEE Journal of Selelcted Topics in Signal Processing. A preliminary version is available at arXiv (link will be added soon).  
+if this code is used in your research please cite our paper:  [BibTeX](https://github.com/dorlivne/PoPS#please-cite-our-paper)
 
 # Special Notes 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
@@ -31,7 +32,19 @@ there is no need to use configs.py if you are planning on implementing "PoPS" on
 5) *utils.py* - a collection of helpful utils that are used for plotting graphs or histograms, using the tensorflow interface with the pruning framework in a more convenient manner and etc.
 
   
-
+## Please Cite Our Paper
+  @ARTICLE{livne2020PoPS,
+      author  = {Livne, Dor and Cohen, Kobi},
+      journal = {to appear in the IEEE Journal of Selected Topics in Signal Processing},
+      title   = {PoPS: Policy Pruning and Shrinking for Deep Reinforcement Learning},
+      year 	= {2020},
+      volume 	= {__},
+      number 	= {__},
+      pages 	= {__-__},
+      doi 	= {__},
+      ISSN 	= {__},
+      month 	= {__},
+  }
 
 
 
