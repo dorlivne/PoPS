@@ -1,5 +1,5 @@
 # PoPS: Policy Pruning and Shrinking for Deep Reinforcement Learning
-This repository contains the PoPS framework code, as presented in "PoPS: Policy Pruning and Shrinking for Deep Reinforcement Learning". The paper has been accepted for publication in the IEEE Journal of Selelcted Topics in Signal Processing. A preliminary version is available at arXiv (https://arxiv.org/abs/2001.05012).  
+This repository contains the PoPS framework code, as presented in "PoPS: Policy Pruning and Shrinking for Deep Reinforcement Learning". The paper has been accepted for publication in the IEEE Journal of Selected Topics in Signal Processing. A preliminary version is available at arXiv (https://arxiv.org/abs/2001.05012).  
 if this code is used in your research please cite our paper:  [BibTeX](https://github.com/dorlivne/PoPS#please-cite-our-paper)
 
 ## Special Notes 
