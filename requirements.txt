@@ -9,7 +9,7 @@ backports.weakref==1.0.post1
 binarytree==4.0.0
 bleach==3.1.0
 Box2D==2.3.2
-certifi==2018.11.29
+certifi==2022.12.7
 chardet==3.0.4
 configparser==3.7.4
 cycler==0.10.0
